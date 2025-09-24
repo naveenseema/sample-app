@@ -1,0 +1,27 @@
+iversion: 0.2
+env:
+  variables:
+    AWS_DEFAULT_REGION: $AWS_REGION
+    ECR_REPO: $ECR_URI
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to ECR...
+      - aws --version
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
+      - IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}
+  build:
+    commands:
+      - echo Building Docker image...
+      - docker build -t $ECR_REPO:$IMAGE_TAG .
+      - docker tag $ECR_REPO:$IMAGE_TAG $ECR_REPO:latest
+  post_build:
+    commands:
+      - echo Pushing image...
+      - docker push $ECR_REPO:$IMAGE_TAG
+      - docker push $ECR_REPO:latest
+      - echo $IMAGE_TAG > image_tag.txt
+artifacts:
+  files:
+    - image_tag.txt
+
