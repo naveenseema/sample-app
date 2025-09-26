@@ -4,7 +4,7 @@ version: 0.2
 phases:
   build:
     commands:
-      - echo "Hello from CodeBuild!"
+      - echo "Hello this seema pipeline"
 artifacts:
   files:
     - '**/*'
