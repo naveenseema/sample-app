@@ -32,13 +32,14 @@ pipeline {
         }
         
         stage('Login to ECR') {
-            steps {
-                // ECR login using AWS CLI on the EC2 worker (using its attached IAM role)
-                sh """
-                aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
-                """
-            }
-        }
+    steps {
+        sh '''
+            aws ecr get-login-password --region us-east-1 | \
+            docker login --username AWS --password-stdin <your_account_id>.dkr.ecr.us-east-1.amazonaws.com
+        '''
+    }
+}
+
         
         stage('Push to ECR') {
             steps {
