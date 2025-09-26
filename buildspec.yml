@@ -1,32 +1,11 @@
+# buildspec.yml
 version: 0.2
 
 phases:
-  pre_build:
-    commands:
-      # 1. Log in to Amazon ECR
-      - echo "Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
-
   build:
     commands:
-      # 2. Build the Docker image
-      - echo "Building Docker image..."
-      - docker build -t $ECR_REPOSITORY_URI:latest .
-      - docker tag $ECR_REPOSITORY_URI:latest $ECR_REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION
-
-  post_build:
-    commands:
-      # 3. Push the Docker image to ECR
-      - echo "Pushing the Docker images..."
-      - docker push $ECR_REPOSITORY_URI:latest
-      - docker push $ECR_REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION
-
-      # 4. Create an 'imagedefinitions.json' file for the deploy stage
-      # This file tells the EKS deploy action what image to use.
-      - printf '[{"name":"sample-app","imageUri":"%s"}]' $ECR_REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION > imagedefinitions.json
-
+      - echo "Hello from CodeBuild!"
 artifacts:
   files:
-    - k8s/deployment.yaml
-    - k8s/service.yaml
-    - imagedefinitions.json # Pass this to the next stage
+    - '**/*'
+
